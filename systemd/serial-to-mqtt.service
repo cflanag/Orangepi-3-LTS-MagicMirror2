@@ -1,0 +1,16 @@
+[Unit]
+Description=ESP-NOW gateway serial to MQTT bridge
+After=network-online.target mosquitto.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dietpi
+WorkingDirectory=/home/dietpi/serial_to_mqtt
+EnvironmentFile=/home/dietpi/serial_to_mqtt/mqtt.env
+ExecStart=/home/dietpi/serial_to_mqtt/venv/bin/python3 -u /home/dietpi/serial_to_mqtt/serial_to_mqtt.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,16 @@
+[Unit]
+Description=MagicMirror² server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dietpi
+WorkingDirectory=/home/dietpi/MagicMirror
+ExecStart=/usr/local/bin/npm run server
+Environment=NODE_ENV=production
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

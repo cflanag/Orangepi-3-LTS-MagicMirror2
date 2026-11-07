@@ -1,0 +1,324 @@
+/* Config Sample
+ *
+ * For more information on how you can configure this file
+ * see https://docs.magicmirror.builders/configuration/introduction.html
+ * and https://docs.magicmirror.builders/modules/configuration.html
+ *
+ * You can use environment variables using a `config.js.template` file instead of `config.js`
+ * which will be converted to `config.js` while starting. For more information
+ * see https://docs.magicmirror.builders/configuration/introduction.html#enviromnent-variables
+ */
+const config = {
+	address: "localhost",	// Address to listen on, can be:
+							// - "localhost", "127.0.0.1", "::1" to listen on loopback interface
+							// - another specific IPv4/6 to listen on a specific interface
+							// - "0.0.0.0", "::" to listen on any interface
+							// Default, when address config is left out or empty, is "localhost"
+	port: 8080,
+	basePath: "/",	// The URL path where MagicMirror² is hosted. If you are using a Reverse proxy
+									// you must set the sub path here. basePath must end with a /
+	ipWhitelist: ["127.0.0.1", "::ffff:127.0.0.1", "::1"],	// Set [] to allow all IP addresses
+									// or add a specific IPv4 of 192.168.1.5 :
+									// ["127.0.0.1", "::ffff:127.0.0.1", "::1", "::ffff:192.168.1.5"],
+									// or IPv4 range of 192.168.3.0 --> 192.168.3.15 use CIDR format :
+									// ["127.0.0.1", "::ffff:127.0.0.1", "::1", "::ffff:192.168.3.0/28"],
+	trustedProxies: [],	// Reverse proxy address(es) allowed to provide client IPs via X-Forwarded-For.
+											// Leave empty (default) if MagicMirror is not behind a reverse proxy.
+
+	useHttps: false,			// Support HTTPS or not, default "false" will use HTTP
+	httpsPrivateKey: "",	// HTTPS private key path, only require when useHttps is true
+	httpsCertificate: "",	// HTTPS Certificate path, only require when useHttps is true
+
+	language: "en",
+	locale: "en-US",   // this variable is provided as a consistent location
+			   // it is currently only used by 3rd party modules. no MagicMirror code uses this value
+			   // as we have no usage, we  have no constraints on what this field holds
+			   // see https://en.wikipedia.org/wiki/Locale_(computer_software) for the possibilities
+
+	logLevel: ["INFO", "LOG", "WARN", "ERROR"], // Add "DEBUG" for even more logging
+	timeFormat: 12,
+	units: "imperial",
+
+ modules: [
+ 
+      {
+        module: "clock",
+        position: "top_left",
+        order: "*",
+        disabled: false,
+        label: "instance 1",
+        hiddenOnStartup: false,
+        configDeepMerge: false,
+        dateFormat: "ddd, LL", // didnt work changed in clock.js
+        animateIn: "None",
+        animateOut: "None",
+        index: 0
+      },
+      {
+        module: "calendar",
+        header: "US Holidays",
+        position: "top_left",
+        config: {
+          maximumEntries: 3,
+          calendars: [
+            {
+              symbol: false,  
+              // symbol: "calendar-check",
+              url: "https://ics.calendarlabs.com/76/mm3137/US_Holidays.ics",
+             // symbolClassName: "fas fa-fw fa-",
+              auth: {
+                password: "",
+                method: "basic"
+              },
+              broadcastPastEvents: false
+            }
+          ],
+         
+        },
+        order: "*",
+        disabled: false,
+        label: "instance 1",
+        hiddenOnStartup: false,
+        configDeepMerge: false,
+        animateIn: "None",
+        animateOut: "None",
+        index: 0
+      },
+      
+      {
+            
+            module: 'MMM-ImageSlideshow',
+            position: 'middle_center',
+            config: {
+                imagePaths: ['modules/MMM-ImageSlideshow/exampleImages'],
+                // put your photos in this folder, or symlink it to a folder or USB stick of resized images
+                slideshowSpeed: 60000,
+                fixedImageWidth: 750,
+                fixedImageHeight: 700,
+                randomizeImageOrder: true,
+            }
+        }, 
+      
+      {
+        module: "MMM-MoonPhase",
+        position: "top_left",
+        config: {
+          basicColor: "white",
+          size: 90,
+          alpha: 0.7,
+          riseAndSet: {
+            display: true,
+            lon: -105.0000, // CHANGE: your longitude,
+            lat: 40.0000, // CHANGE: your latitude,
+            gmtOffset: -7 // CHANGE: your UTC offset
+          }
+        },
+        order: "*",
+        disabled: false,
+        hiddenOnStartup: false,
+        configDeepMerge: false,
+        animateIn: "None",
+        animateOut: "None"
+      },
+      {
+		module: "MMM-APOD",
+		position: "bottom_left",
+		config: {
+			
+            //initialLoadDelay: 3000, // Delays the aAPI call for 3 seconds
+			maxMediaWidth: 290,
+			maxMediaHeight: 240
+          }
+       }, 
+       
+ {
+		module: "MMM-APOD2",
+		position: "top_center",
+		config: {
+            showDescription: true,
+            useShortDescription: false,
+			maxMediaWidth: 1000,
+			maxMediaHeight: 500
+          }
+       },       
+      
+      
+     {
+        module: "weather",
+        position: "top_right",
+        config: {
+          units: "config.units",     
+          weatherProvider: "weathergov",
+          apiBase: "https://api.weather.gov/points/",
+          lat: 40.0000, // CHANGE: your latitude,
+          lon: -105.0000, // CHANGE: your longitude,
+          showHumidity: "temp",
+          showPrecipitationProbability: true,
+          showPrecipitationAmount: true
+        },
+       
+      }, 
+      
+             
+      {
+        module: "weather",
+        position: "top_right",
+        header: "Weather Forecast",
+        config: {
+            initialLoadDelay: 1000,
+            type: "daily",
+            weatherProvider: "weathergov",
+            apiBase: "https://api.weather.gov/points/",
+            lat: 40.0000, // CHANGE: your latitude,
+            lon: -105.0000, // CHANGE: your longitude,
+            tableClass: "medium",
+            colored: true,
+            ignoreToday: true     
+        },
+              
+      },  
+            
+
+        {
+  module: 'MMM-MQTT',
+  position: 'bottom_right',
+  header: 'Sensors',
+  config: {
+    logging: false,
+    useWildcards: false,
+    bigMode: false, // Set to true to display big numbers with label above
+    mqttServers: [
+      {
+        address: 'localhost',  // Server address or IP address
+        port: '1883',          // Port number if other than default
+
+        subscriptions: [
+            
+            {
+              topic: 'sensors/mcp9808/temperature',
+              label: 'Livingroom Temp',
+              suffix: '°F',
+              decimals: 1,
+              sortOrder: 5,
+              maxAgeSeconds: 30,   // publishing every 10s, so flag stale data sooner
+              broadcast: true,
+              colors: [
+                { upTo: -20, value: "blue"},
+              { upTo: 32, value: "blue"},
+              { upTo: 68, value: "#98C2F5"},
+              { upTo: 80, value: "#e83f8e" },
+              { upTo: 90, value: "red" }, // The last one is used for higher values too
+              ],
+            },
+            
+            
+           {
+            topic: 'sensors/am2301b/temperature', // Topic to look for
+            label: 'Frontyard temp', // Displayed in front of value
+            suffix: '°F',         // Displayed after the value
+            decimals: 1,          // Round numbers to this number of decimals
+            sortOrder: 40,        // Can be used to sort entries in the same table
+            maxAgeSeconds: 720,    // Reduce intensity if value is older
+            broadcast: true,      // Broadcast messages to other modules
+            colors: [             // Value dependent colors
+              { upTo: -20, value: "blue"},
+              { upTo: 32, value: "blue"},
+              { upTo: 68, value: "#98C2F5"},
+              { upTo: 80, value: "#e83f8e" },
+              { upTo: 90, value: "red" }, // The last one is used for higher values too
+            ],
+          },          
+          
+           {
+            topic: 'sensors/am2301b/humidity',
+            label: 'Fronyard Humidity',
+            suffix: '%',
+            decimals: 1,
+            decimalSignInMessage: ",", // If the message decimal point is not "."
+            sortOrder: 50,
+            maxAgeSeconds: 720
+            
+          },    
+            
+            
+          {
+            topic: 'sensors/bme280/temperature', // Topic to look for
+            label: 'Backyard Temp', // Displayed in front of value
+            suffix: '°F',         // Displayed after the value
+            decimals: 1,          // Round numbers to this number of decimals
+            sortOrder: 10,        // Can be used to sort entries in the same table
+            maxAgeSeconds: 720,    // Reduce intensity if value is older
+            broadcast: true,      // Broadcast messages to other modules
+            colors: [             // Value dependent colors
+              { upTo: -20, value: "blue"},
+              { upTo: 32, value: "blue"},
+              { upTo: 68, value: "#98C2F5"},
+              { upTo: 80, value: "#e83f8e" },
+              { upTo: 90, value: "red" }, // The last one is used for higher values too
+            ],
+          },
+          {
+            topic: 'sensors/bme280/humidity',
+            label: 'Backyard Humidity',
+            suffix: '%',
+            decimals: 0,        
+            sortOrder: 20,
+            maxAgeSeconds: 720
+          },
+          
+           {
+            topic: 'sensors/bme280/pressure',
+            label: 'Backyard Pressure',
+            suffix: 'hPa',
+            decimals: 1,
+            decimalSignInMessage: ",", // If the message decimal point is not "."
+            sortOrder: 30,
+            maxAgeSeconds: 720
+            
+          }
+          
+
+        ]
+      }
+    ],
+  }
+},
+
+    {
+        module: 'MMM-pages',
+        config: {
+                modules: [
+                    ['clock', 'calendar', 'MMM-ImageSlideshow', 'MMM-MoonPhase', 'MMM-APOD', 'weather', 'MMM-MQTT'],
+                    ['MMM-APOD2'],
+                 ],
+                fixed: ['alert', 'MMM-page-indicator']
+        }
+    }, 
+    
+    {
+        module: 'MMM-page-indicator',
+        position: 'bottom_bar',
+        config: {
+            pages: 2,
+        }
+    },
+
+     {
+	module: "MMM-Remote-Control",
+      },
+
+      {
+        module: "alert",
+        order: "*",
+        disabled: false,
+        label: "instance 1",
+        hiddenOnStartup: false,
+        configDeepMerge: false,
+        animateIn: "None",
+        animateOut: "None",
+        index: 0
+      }
+    ]
+  };
+/*************** DO NOT EDIT THE LINE BELOW ***************/
+if (typeof module !== "undefined") { module.exports = config; }

@@ -1,0 +1,17 @@
+[Unit]
+Description=MCP9808 temperature to MQTT
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dietpi
+WorkingDirectory=/home/dietpi/mcp9808
+EnvironmentFile=/home/dietpi/mcp9808/mqtt.env
+ExecStart=/home/dietpi/mcp9808/venv/bin/python3 -u /home/dietpi/mcp9808/mcp9808_mqtt.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+

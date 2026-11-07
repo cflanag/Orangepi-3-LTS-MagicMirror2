@@ -1,0 +1,3 @@
+adafruit-circuitpython-mcp9808
+adafruit-extended-bus
+paho-mqtt>=2.0
