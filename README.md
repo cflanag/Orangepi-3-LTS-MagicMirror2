@@ -449,7 +449,7 @@ A push button wired to the Pi turns the mirror to its next page. `pagebutton.py`
 
 ### 7.1 Wiring
 
-Connect a push button between **PD21** (wPi 13, GPIO 117) and **GND**. The script turns on the pin's internal pull-up, so it reads HIGH when idle and LOW when pressed, and no resistor is needed. The H6's PD bank has no interrupt support, so the script polls the pin (100 Hz, with a 30 ms debounce and a 0.5 s lockout between presses).
+Connect a push button between **PD21** (wPi 13, GPIO 117), which is **header pin 22**, and **GND** on **header pin 20**. The two pins are on the same side of the 40-pin header, so one two-wire lead is enough. The script turns on the pin's internal pull-up, so it reads HIGH when idle and LOW when pressed, and no resistor is needed. The H6's PD bank has no interrupt support, so the script polls the pin (100 Hz, with a 30 ms debounce and a 0.5 s lockout between presses).
 
 On this board PD21 is line 117 on `/dev/gpiochip1` (bank D is number 3, so 3 × 32 + 21 = 117). If your chip numbers differ, find the right one with:
 
