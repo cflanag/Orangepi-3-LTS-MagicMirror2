@@ -125,7 +125,7 @@ const config = {
 		position: "bottom_left",
 		config: {
 			
-            //initialLoadDelay: 3000, // Delays the aAPI call for 3 seconds
+            initialLoadDelay: 10000, // stagger the request: MMM-APOD and MMM-APOD2 fetch the same NASA endpoint, and two simultaneous requests can leave one stuck on "Loading..."
 			maxMediaWidth: 290,
 			maxMediaHeight: 240
           }

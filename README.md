@@ -147,6 +147,16 @@ git clone https://github.com/Jopyth/MMM-Remote-Control
 for d in MMM-*/; do [ -f "$d/package.json" ] && (cd "$d" && npm install); done
 ```
 
+**Patch `MMM-APOD` first.** NASA retired the `api.nasa.gov/planetary/apod` endpoint that `MMM-APOD` uses (it now returns an error), so the upstream module cannot load pictures. `patches/MMM-APOD-nasa-science-api.patch` in this repository switches it to NASA's `science.nasa.gov` endpoint, which needs no API key. It was written against upstream commit `3599a41`, so check that commit out and apply the patch (use the real path to your copy of this repository):
+
+```bash
+cd ~/MagicMirror/modules/MMM-APOD
+git checkout 3599a41
+git apply /path/to/this/repo/patches/MMM-APOD-nasa-science-api.patch
+```
+
+Do this before making the `MMM-APOD2` copy below, so the copy carries the fix.
+
 **A second APOD module (`MMM-APOD2`).** MagicMirror cannot run two modules with the same name, so the second APOD instance is a renamed copy of the first. Copy the folder, rename the files, then rename every `MMM-APOD` inside them:
 
 ```bash
@@ -158,6 +168,12 @@ mv MMM-APOD.js MMM-APOD2.js
 mv MMM-APOD.css MMM-APOD2.css
 sed -i 's/MMM-APOD/MMM-APOD2/g' MMM-APOD2.js MMM-APOD2.css
 grep -rn 'MMM-APOD' . | grep -v 'MMM-APOD2'    # should print nothing
+```
+
+Both modules request the same NASA endpoint at startup. If they start together, one can be refused and stay on "Loading..." forever, because the module does not retry after a 403 or 429. Prevent this by giving `MMM-APOD` a start delay in `config.js` (the example config already has it):
+
+```js
+initialLoadDelay: 10000,
 ```
 
 ### Configure MagicMirror
