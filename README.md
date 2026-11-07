@@ -9,6 +9,10 @@ The design is deliberately light:
 - **Chromium in kiosk mode** (DietPi's minimal X, no Xfce, no Electron) shows `http://localhost:8080` full screen at boot.
 - The **MQTT sensor script** runs as its own systemd service.
 
+| Page 1 | Page 2 |
+|---|---|
+| ![MagicMirror page 1: clock, holidays, moon phase, photo slideshow, weather and sensor readings](docs/mirror-page1.jpg) | ![MagicMirror page 2: the NASA picture of the day with its description](docs/mirror-page2.jpg) |
+
 > **Status of this document:** tested on an Orange Pi 3 LTS running DietPi v10.8.2.
 
 ## Hardware
@@ -522,6 +526,12 @@ systemd/*.service          the service files (magicmirror, mcp9808-mqtt, serial-
 mcp9808/mcp9808_mqtt.py    sensor script
 mcp9808/requirements.txt   Python dependencies
 mcp9808/mqtt.env.example   MQTT settings template (never commit the real mqtt.env)
+LICENSE                    MIT licence
+docs/                      screenshots of the finished mirror
 serial_to_mqtt/            ESP-NOW gateway: serial_to_mqtt.py, requirements.txt, mqtt.env.example
 pagebutton/                page-turn button on a GPIO pin: pagebutton.py, requirements.txt
 ```
+
+## License
+
+MIT, see [LICENSE](LICENSE). The patch in `patches/` modifies [MMM-APOD](https://github.com/grenagit/MMM-APOD); check that module's own repository for its licence.
