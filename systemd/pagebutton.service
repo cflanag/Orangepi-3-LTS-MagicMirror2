@@ -1,0 +1,13 @@
+[Unit]
+Description=MagicMirror page button (PD21)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/home/dietpi/pagebutton
+ExecStart=/home/dietpi/pagebutton/venv/bin/python -u /home/dietpi/pagebutton/pagebutton.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -439,7 +439,58 @@ The ESP-NOW receiver ESP32 prints one JSON line per reading on its USB serial po
 
 The script publishes with `retain=True`, so after a restart the mirror shows the last known values straight away rather than waiting for the next wireless reading.
 
-## 7. Backup and restore
+## 7. Page button (GPIO)
+
+A push button wired to the Pi turns the mirror to its next page. `pagebutton.py` watches the pin and sends `PAGE_INCREMENT` to `MMM-pages` through the `MMM-Remote-Control` HTTP API (`http://localhost:8080/api/notification/PAGE_INCREMENT`), so both modules must be installed (section 4).
+
+### 7.1 Wiring
+
+Connect a push button between **PD21** (wPi 13, GPIO 117) and **GND**. The script turns on the pin's internal pull-up, so it reads HIGH when idle and LOW when pressed, and no resistor is needed. The H6's PD bank has no interrupt support, so the script polls the pin (100 Hz, with a 30 ms debounce and a 0.5 s lockout between presses).
+
+On this board PD21 is line 117 on `/dev/gpiochip1` (bank D is number 3, so 3 × 32 + 21 = 117). If your chip numbers differ, find the right one with:
+
+```bash
+sudo apt install -y gpiod
+gpiodetect
+gpioinfo | grep -n PD21
+```
+
+and edit `CHIP` and `LINE` at the top of the script.
+
+### 7.2 Install the script
+
+```bash
+mkdir -p ~/pagebutton && cd ~/pagebutton
+python3 -m venv venv
+./venv/bin/pip install -r requirements.txt
+```
+
+Put `pagebutton.py` in `~/pagebutton/`, then test it by hand (press the button, and the mirror should change page):
+
+```bash
+sudo ./venv/bin/python pagebutton.py
+```
+
+### 7.3 Run it as a service
+
+Install `systemd/pagebutton.service` as `/etc/systemd/system/pagebutton.service`, then:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now pagebutton.service
+journalctl -u pagebutton.service -f
+```
+
+The unit has no `User=`, so it runs as root, which can open `/dev/gpiochip*` without any permission changes. Do **not** rely on `chown`/`chmod` of `/dev/gpiochip*` to run it as a normal user: those changes are lost at every reboot, because the device nodes are recreated. To run it as `dietpi`, add a udev rule and put `User=dietpi` in the unit:
+
+```bash
+echo 'SUBSYSTEM=="gpio", KERNEL=="gpiochip*", GROUP="dialout", MODE="0660"' | sudo tee /etc/udev/rules.d/99-gpio.rules
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+
+If you set an `apiKey` for `MMM-Remote-Control` (section 4), the URL in `pagebutton.py` needs `?apiKey=<key>` on the end, or the presses are rejected.
+
+## 8. Backup and restore
 
 - DietPi's built-in tool: `sudo dietpi-backup` backs up system configuration.
 - Back up what DietPi does not know about: `~/MagicMirror/config/config.js`, any custom modules in `~/MagicMirror/modules/`, `~/mcp9808/`, and the two service files.
@@ -451,7 +502,7 @@ The script publishes with `retain=True`, so after a restart the mirror shows the
 
 - Copy the archive off the Pi (`scp`) so it survives an eMMC failure.
 
-## 8. Troubleshooting
+## 9. Troubleshooting
 
 | Symptom | Check |
 |---|---|
@@ -467,9 +518,10 @@ The script publishes with `retain=True`, so after a restart the mirror shows the
 ```
 README.md                  this guide
 config/config.js.example   MagicMirror config with secrets removed
-systemd/*.service          the service files (magicmirror, mcp9808-mqtt, serial-to-mqtt)
+systemd/*.service          the service files (magicmirror, mcp9808-mqtt, serial-to-mqtt, pagebutton)
 mcp9808/mcp9808_mqtt.py    sensor script
 mcp9808/requirements.txt   Python dependencies
 mcp9808/mqtt.env.example   MQTT settings template (never commit the real mqtt.env)
 serial_to_mqtt/            ESP-NOW gateway: serial_to_mqtt.py, requirements.txt, mqtt.env.example
+pagebutton/                page-turn button on a GPIO pin: pagebutton.py, requirements.txt
 ```
